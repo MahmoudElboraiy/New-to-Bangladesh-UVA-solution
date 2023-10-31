@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define fast cin.tie(0), cout.tie(0), cin.sync_with_stdio(0), cout.sync_with_stdio(0);
+struct edge{
+    int time,cost,src;
+    bool  operator <(const edge &a )const{
+        if(a.time!=time)return a.time<time;
+        else return a.cost<cost;
+    }
+};
+pair<int,int> dikstra(int src,int dest,vector<vector<edge>>&edges){
+    vector<int>time(edges.size()+2,-1);
+    priority_queue<edge>pq;
+    pq.push({0,0,src});
+    while (!pq.empty()){
+        edge cur =pq.top();pq.pop();
+        if(time[cur.src]!=-1)continue;
+        time[cur.src]=cur.time;
+        if(cur.src==dest)return {time[cur.src],cur.cost};
+        for(edge e :edges[cur.src]){
+            if(time[e.src]==-1){
+                pq.push({cur.time+e.time,cur.cost+e.cost ,e.src});
+            }
+        }
+    }
+    return make_pair(-1,-1);
+}
+void solve(){
+    int node,rela;
+    cin>>node>>rela;
+    vector<vector<edge>>edges(node+3);
+    int from, to ,time ,cost;
+    for(int i=0;i<rela;i++){
+        cin>>from>>to>>time>>cost;
+        edges[from].push_back({time,cost,to});
+        edges[to].push_back({time,cost,from});
+    }
+    int q;
+    cin>>q;
+    while (q--){
+        int s,d;
+        cin>>s>>d;
+        pair<int,int>ans= dikstra(s,d,edges);
+        if(ans.first==-1) cout<<"No Path.\n";
+        else   cout<<"Distance and time to reach destination is "<< ans.second<<" & " <<ans.first<<".\n";
+    }
+}
+int main() {
+    fast
+    int t=1;cin>>t;while (t--) {
+        solve();
+        if(t)cout<<"\n";
+   }
+}
